@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Musings of a FlatIron Ruby Studnet]]></title>
+  <link href="http://Ewarren7.github.io/atom.xml" rel="self"/>
+  <link href="http://Ewarren7.github.io/"/>
+  <updated>2014-06-15T14:08:15-04:00</updated>
+  <id>http://Ewarren7.github.io/</id>
+  <author>
+    <name><![CDATA[Edward Warren]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[My First Post on Octopress]]></title>
+    <link href="http://Ewarren7.github.io/blog/2014/06/15/my-first-post-on-octopress/"/>
+    <updated>2014-06-15T14:04:10-04:00</updated>
+    <id>http://Ewarren7.github.io/blog/2014/06/15/my-first-post-on-octopress</id>
+    <content type="html"><![CDATA[<p>Hello, world!</p>
+]]></content>
+  </entry>
+  
+</feed>
