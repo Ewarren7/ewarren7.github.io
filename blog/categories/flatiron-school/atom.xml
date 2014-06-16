@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Flatiron&nbsp;School | Musings of a FlatIron Ruby Studnet]]></title>
+  <title><![CDATA[Category: Flatiron&nbsp;School | Musings of a Flatiron Ruby Student]]></title>
   <link href="http://Ewarren7.github.io/blog/categories/flatiron-school/atom.xml" rel="self"/>
   <link href="http://Ewarren7.github.io/"/>
-  <updated>2014-06-15T22:53:01-04:00</updated>
+  <updated>2014-06-15T23:20:28-04:00</updated>
   <id>http://Ewarren7.github.io/</id>
   <author>
     <name><![CDATA[Edward Warren]]></name>
