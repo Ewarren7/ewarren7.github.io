@@ -3,7 +3,7 @@ layout: post
 title: "The Shoveled Hash"
 date: 2014-06-15 18:50:54 -0400
 comments: true
-categories: "hash", "shovel"
+categories: 
 ---
 #"Where's My Shovel" asks the Hash
 
