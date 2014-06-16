@@ -94,7 +94,7 @@
   </header>
 
 
-  <div class="entry-content"><h1>Where&rsquo;s My Shovel asks the Hash</h1>
+  <div class="entry-content"><h2>Where&rsquo;s My Shovel asks the Hash</h2>
 
 <p>As a typical Ruby student, I became acquainted with arrays before hashes. The array shovel, aka <code>&lt;&lt;</code> really made sense to me and once I moved on to Hashes I found it very disconcerting that hashes were left shovelless.</p>
 
@@ -117,220 +117,148 @@
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span> <span class="o">=&gt;</span> <span class="s2">&quot;three&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="ss">:d</span> <span class="o">=&gt;</span> <span class="s2">&quot;three&quot;</span><span class="p">})</span>
 </span><span class='line'> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="ss">:d</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">}</span>
-</span><span class='line'> <span class="sb">```</span>
-</span><span class='line'><span class="sb">`</span><span class="n">store</span><span class="sb">`</span>
-</span><span class='line'><span class="sb"> ```</span><span class="n">ruby</span>
-</span><span class='line'><span class="nb">test</span> <span class="o">=</span> <span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span> <span class="o">=&gt;</span> <span class="s2">&quot;three&quot;</span><span class="p">}</span>
-</span><span class='line'> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>store</code>
+ &#8220;`ruby
+test = {:a => &ldquo;one&rdquo;, :b => &ldquo;two&rdquo;, :c => &ldquo;three&rdquo;}
+ => {:a=>&ldquo;one&rdquo;, :b=>&ldquo;two&rdquo;, :c=>&ldquo;three&rdquo;}</p>
+
+<p>test.store(:d, &ldquo;three&rdquo;)
+ => &ldquo;three&rdquo;</p>
+
+<p>test
+ => {:a=>&ldquo;one&rdquo;, :b=>&ldquo;two&rdquo;, :c=>&ldquo;three&rdquo;, :d=>&ldquo;three&rdquo;}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Despite</span> <span class="n">the</span> <span class="n">verbosity</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="nb">methods</span><span class="p">,</span> <span class="n">they</span> <span class="n">also</span> <span class="n">have</span> <span class="n">the</span> <span class="n">affect</span> <span class="n">of</span> <span class="n">replacing</span> <span class="n">a</span> <span class="n">key</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">value</span> <span class="k">if</span> <span class="n">you</span> <span class="sb">`merge!`</span> <span class="ow">or</span> <span class="sb">`store`</span> <span class="n">using</span> <span class="n">a</span> <span class="n">key</span> <span class="n">that</span> <span class="n">already</span> <span class="n">exists</span> <span class="k">in</span> <span class="n">the</span> <span class="nb">hash</span><span class="o">.</span>
 </span><span class='line'>
-</span><span class='line'><span class="nb">test</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="ss">:d</span><span class="p">,</span> <span class="s2">&quot;three&quot;</span><span class="p">)</span>
-</span><span class='line'> <span class="o">=&gt;</span> <span class="s2">&quot;three&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">test</span>
-</span><span class='line'> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="ss">:d</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="c1">##A hash with a shovel is a beautiful thing </span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Despite the verbosity of the above methods, they also have the affect of replacing a key&rsquo;s value if you <code>merge!</code> or <code>store</code> using a key that already exists in the hash.</p>
-
-<h2>A hash with a shovel is a beautiful thing</h2>
+<p>ruby
+{:a => &ldquo;one&rdquo;, :b => &ldquo;two&rdquo;} &lt;&lt; {:c => &ldquo;three&rdquo;}
+=> {:a=>&ldquo;one&rdquo;, :b=>&ldquo;two&rdquo;, :c=>&ldquo;three&rdquo;}</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;two&quot;</span><span class="p">}</span> <span class="o">&lt;&lt;</span> <span class="p">{</span><span class="ss">:c</span> <span class="o">=&gt;</span> <span class="s2">&quot;three&quot;</span><span class="p">}</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">The</span> <span class="n">above</span> <span class="n">seems</span> <span class="n">so</span> <span class="n">simple</span> <span class="ow">and</span> <span class="n">elegant</span><span class="o">.</span> <span class="no">Taking</span> <span class="n">it</span> <span class="n">further</span><span class="p">,</span> <span class="n">what</span> <span class="k">if</span> <span class="n">the</span> <span class="n">key</span> <span class="n">you</span> <span class="n">shovel</span> <span class="n">already</span> <span class="n">exists?</span> <span class="no">Wouldn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">it</span> <span class="n">be</span> <span class="n">nice</span> <span class="k">if</span> <span class="n">the</span> <span class="sb">`&lt;&lt;`</span> <span class="nb">method</span> <span class="n">took</span> <span class="n">the</span> <span class="n">existing</span> <span class="n">value</span> <span class="k">in</span> <span class="n">the</span> <span class="nb">hash</span> <span class="ow">and</span> <span class="n">put</span> <span class="n">it</span> <span class="n">into</span> <span class="n">an</span> <span class="n">array</span> <span class="ow">and</span> <span class="k">then</span> <span class="n">added</span> <span class="n">the</span> <span class="n">passed</span> <span class="n">values?</span> <span class="n">I</span> <span class="n">think</span> <span class="n">so</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The above seems so simple and elegant. Taking it further, what if the key you shovel already exists? Wouldn&rsquo;t it be nice if the <code>&lt;&lt;</code> method took the existing value in the hash and put it into an array and then added the passed values? I think so.</p>
+<p>ruby
+{:a => &ldquo;one&rdquo;, :b => &ldquo;two&rdquo;} &lt;&lt; {:b => &ldquo;an additional b value!!&rdquo;}
+=> {:a=>&ldquo;one&rdquo;, :b=>[&ldquo;two&rdquo;, &ldquo;an additional b value!!&rdquo;]}</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;two&quot;</span><span class="p">}</span> <span class="o">&lt;&lt;</span> <span class="p">{</span><span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;an additional b value!!&quot;</span><span class="p">}</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;[</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="s2">&quot;an additional b value!!&quot;</span><span class="o">]</span><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">What</span> <span class="k">if</span> <span class="n">the</span> <span class="n">the</span> <span class="n">key</span> <span class="n">exists</span> <span class="ow">and</span> <span class="n">it</span> <span class="n">has</span> <span class="n">a</span> <span class="n">__value</span> <span class="n">that</span> <span class="n">is</span> <span class="n">already</span> <span class="n">an</span> <span class="n">array__?</span> <span class="no">Wouldn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">it</span> <span class="n">be</span> <span class="n">nice</span> <span class="k">if</span> <span class="n">the</span> <span class="n">shoveled</span> <span class="n">value</span> <span class="n">was</span> <span class="n">justed</span> <span class="n">added</span> <span class="n">to</span> <span class="n">the</span> <span class="n">array?</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>What if the the key exists and it has a <strong>value that is already an array</strong>? Wouldn&rsquo;t it be nice if the shoveled value was justed added to the array?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="o">]</span><span class="p">}</span> <span class="o">&lt;&lt;</span> <span class="p">{</span><span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;an additional b value!!&quot;</span><span class="p">}</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;[</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;an additional b value!!&quot;</span><span class="o">]</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Making the above a reality &ndash; duck punching the Hash class</h3>
-
-<p>Achieving the above can be done by adding to / duck punching the Hash class. Defining a <code>class Hash</code> at the top of your ruby script is the simplest way to achieve this. The ruby interpretor will read from this version of the Hash class before looking up the main Hash class included with ruby. Any new methods added will exist in addition to the original Hash class methods.</p>
-
-<p>A very simple implementation</p>
+<p>ruby
+{:a => &ldquo;one&rdquo;, :b => [&ldquo;two&rdquo;, 2]} &lt;&lt; {:b => &ldquo;an additional b value!!&rdquo;}
+=> {:a=>&ldquo;one&rdquo;, :b=>[&ldquo;two&rdquo;, 2, &ldquo;an additional b value!!&rdquo;]}</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Hash</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">&lt;&lt;</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-</span><span class='line'>    <span class="nb">self</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">###Making the above a reality - duck punching the Hash class</span>
+</span><span class='line'><span class="no">Achieving</span> <span class="n">the</span> <span class="n">above</span> <span class="n">can</span> <span class="n">be</span> <span class="n">done</span> <span class="n">by</span> <span class="n">adding</span> <span class="n">to</span> <span class="o">/</span> <span class="n">duck</span> <span class="n">punching</span> <span class="n">the</span> <span class="no">Hash</span> <span class="n">class</span><span class="o">.</span> <span class="no">Defining</span> <span class="n">a</span> <span class="sb">`class Hash`</span> <span class="n">at</span> <span class="n">the</span> <span class="n">top</span> <span class="n">of</span> <span class="n">your</span> <span class="n">ruby</span> <span class="n">script</span> <span class="n">is</span> <span class="n">the</span> <span class="n">simplest</span> <span class="n">way</span> <span class="n">to</span> <span class="n">achieve</span> <span class="n">this</span><span class="o">.</span> <span class="no">The</span> <span class="n">ruby</span> <span class="n">interpretor</span> <span class="n">will</span> <span class="n">read</span> <span class="n">from</span> <span class="n">this</span> <span class="n">version</span> <span class="n">of</span> <span class="n">the</span> <span class="no">Hash</span> <span class="k">class</span> <span class="n">before</span> <span class="n">looking</span> <span class="n">up</span> <span class="n">the</span> <span class="n">main</span> <span class="no">Hash</span> <span class="k">class</span> <span class="n">included</span> <span class="n">with</span> <span class="n">ruby</span><span class="o">.</span> <span class="no">Any</span> <span class="kp">new</span> <span class="nb">methods</span> <span class="n">added</span> <span class="n">will</span> <span class="n">exist</span> <span class="k">in</span> <span class="n">addition</span> <span class="n">to</span> <span class="n">the</span> <span class="n">original</span> <span class="no">Hash</span> <span class="k">class</span> <span class="nb">methods</span><span class="o">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">A</span> <span class="n">very</span> <span class="n">simple</span> <span class="n">implementation</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p></p>
+<p>ruby
+class Hash
+  def &lt;&lt;(a)</p>
 
-<p>With this simple class method added to Hash class you can now shovel an existing hash with another hash passed in the <code>{}</code> format.
-The ruby interpreter allows you to do <code>hash1 &lt;&lt; hash2</code> whereas most other methods would require the <code>.</code>, ie <code>hash1 &lt;&lt; hash2</code> is the same as hash1.&lt;&lt; hash2. In the above the (a) is the passed parameter given after the <code>&lt;&lt;</code></p>
+<pre><code>self.merge!(a)
+</code></pre>
+
+<p>  end
+end</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;alpha&quot;</span><span class="p">}</span> <span class="o">&lt;&lt;</span> <span class="p">{</span><span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;bravo&quot;</span><span class="p">}</span>
-</span><span class='line'> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;bravo&quot;</span><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">With</span> <span class="n">this</span> <span class="n">simple</span> <span class="k">class</span> <span class="nb">method</span> <span class="n">added</span> <span class="n">to</span> <span class="no">Hash</span> <span class="k">class</span> <span class="n">you</span> <span class="n">can</span> <span class="n">now</span> <span class="n">shovel</span> <span class="n">an</span> <span class="n">existing</span> <span class="nb">hash</span> <span class="n">with</span> <span class="n">another</span> <span class="nb">hash</span> <span class="n">passed</span> <span class="k">in</span> <span class="n">the</span> <span class="sb">`{}`</span> <span class="nb">format</span><span class="o">.</span>
+</span><span class='line'><span class="no">The</span> <span class="n">ruby</span> <span class="n">interpreter</span> <span class="n">allows</span> <span class="n">you</span> <span class="n">to</span> <span class="k">do</span> <span class="sb">`hash1 &lt;&lt; hash2`</span> <span class="n">whereas</span> <span class="n">most</span> <span class="n">other</span> <span class="nb">methods</span> <span class="n">would</span> <span class="nb">require</span> <span class="n">the</span> <span class="sb">`.`</span><span class="p">,</span> <span class="n">ie</span> <span class="sb">`hash1 &lt;&lt; hash2`</span> <span class="n">is</span> <span class="n">the</span> <span class="n">same</span> <span class="n">as</span> <span class="sb">`hash1.&lt;&lt; hash2`</span><span class="o">.</span> <span class="no">In</span> <span class="n">the</span> <span class="n">above</span> <span class="n">the</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="n">is</span> <span class="n">the</span> <span class="n">passed</span> <span class="n">parameter</span> <span class="n">given</span> <span class="n">after</span> <span class="n">the</span> <span class="sb">`&lt;&lt;`</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>Done with the baby steps</h3>
-
-<p>While the above is great, the &lt;&lt; method needs to grow a bit to give me the full functionality I described above (plus more!)
-Below is my full Hash class duck punch, followed by some explanations.</p>
+<p>ruby
+{:a => &ldquo;alpha&rdquo;} &lt;&lt; {:b => &ldquo;bravo&rdquo;}
+ => {:a=>&ldquo;alpha&rdquo;, :b=>&ldquo;bravo&rdquo;}</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Hash</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">&lt;&lt;</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">class</span> <span class="o">==</span> <span class="no">Hash</span>
-</span><span class='line'>      <span class="n">passed_key</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">first</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-</span><span class='line'>      <span class="n">passed_value</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">first</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>    <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">class</span> <span class="o">==</span> <span class="nb">Array</span>
-</span><span class='line'>      <span class="n">passed_key</span> <span class="o">=</span> <span class="n">a</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-</span><span class='line'>      <span class="n">passed_value</span> <span class="o">=</span> <span class="n">a</span><span class="o">[</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="c1">#more than 2 values in passed array means pass_value becomes an array of all the values after [0]</span>
-</span><span class='line'>      <span class="n">passed_value</span> <span class="o">=</span> <span class="n">a</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">2</span> <span class="c1"># only 2 values in array so first must be key and 2nd must be value</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>    <span class="k">if</span> <span class="o">!</span><span class="n">b</span><span class="o">.</span><span class="n">nil?</span> <span class="c1">#if a second argument is passed, treat it as first being the key and second being the value</span>
-</span><span class='line'>      <span class="n">passed_key</span><span class="o">=</span><span class="n">a</span>
-</span><span class='line'>      <span class="n">passed_value</span> <span class="o">=</span> <span class="n">b</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">#IMPLIMENTATION </span>
-</span><span class='line'>    <span class="k">if</span> <span class="nb">self</span><span class="o">[</span><span class="n">passed_key</span><span class="o">].</span><span class="n">nil?</span>
-</span><span class='line'>      <span class="nb">self</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="n">passed_key</span> <span class="o">=&gt;</span> <span class="n">passed_value</span><span class="p">})</span>
-</span><span class='line'>    <span class="k">else</span> <span class="c1">#if the key passed exists, then take current value of key and put it in array w/ passed valued</span>
-</span><span class='line'>      <span class="n">temp</span> <span class="o">=</span> <span class="nb">self</span><span class="o">[</span><span class="n">passed_key</span><span class="o">]</span> <span class="c1">#grab current value of existing key</span>
-</span><span class='line'>        <span class="k">if</span> <span class="n">temp</span><span class="o">.</span><span class="n">class</span> <span class="o">==</span> <span class="nb">Array</span> <span class="c1">#if the existing value is already an array then add to that array</span>
-</span><span class='line'>          <span class="nb">self</span><span class="o">[</span><span class="n">passed_key</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="n">passed_value</span>
-</span><span class='line'>        <span class="k">else</span>
-</span><span class='line'>          <span class="nb">self</span><span class="o">[</span><span class="n">passed_key</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span><span class="n">temp</span><span class="p">,</span><span class="n">passed_value</span><span class="o">]</span> <span class="c1">#create an array with original value and passed value</span>
-</span><span class='line'>      <span class="k">end</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="nb">self</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">array</span>
-</span><span class='line'>    <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span><span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="o">|</span> <span class="nb">hash</span><span class="o">[</span><span class="n">key</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span><span class="p">}</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">end</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">###Done with the baby steps</span>
+</span><span class='line'><span class="no">While</span> <span class="n">the</span> <span class="n">above</span> <span class="n">is</span> <span class="n">great</span><span class="p">,</span> <span class="n">the</span> <span class="sb">`&lt;&lt;`</span> <span class="nb">method</span> <span class="n">needs</span> <span class="n">to</span> <span class="n">grow</span> <span class="n">a</span> <span class="n">bit</span> <span class="n">to</span> <span class="n">give</span> <span class="n">me</span> <span class="n">the</span> <span class="n">full</span> <span class="n">functionality</span> <span class="n">I</span> <span class="n">described</span> <span class="n">above</span> <span class="p">(</span><span class="n">plus</span> <span class="n">more!</span><span class="p">)</span>
+</span><span class='line'><span class="no">Below</span> <span class="n">is</span> <span class="n">my</span> <span class="n">full</span> <span class="no">Hash</span> <span class="k">class</span> <span class="n">duck</span> <span class="n">punch</span><span class="p">,</span> <span class="n">followed</span> <span class="n">by</span> <span class="n">some</span> <span class="n">explanations</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>I added an optional parameter <code>b</code> which allows you to pass 2 parameters, the first being the key and the second being the value. Unfortunately, ruby does not let you use the space <code>&lt;&lt;</code> shortcut explained above when passing two parameters. Instead, the only way to pass this second parameter (as far as I know) is using the <code>hash1.&lt;&lt; key,value</code>.</p>
+<p>ruby
+class Hash
+  def &lt;&lt;(a, b=nil)</p>
+
+<pre><code>if a.class == Hash
+  passed_key = a.first[0]
+  passed_value = a.first[1]
+end
+if a.class == Array
+  passed_key = a[0]
+  passed_value = a[1..-1] if a.length &gt; 2 #more than 2 values in passed array means pass_value becomes an array of all the values after [0]
+  passed_value = a[1] if a.length == 2 # only 2 values in array so first must be key and 2nd must be value
+end
+if !b.nil? #if a second argument is passed, treat it as first being the key and second being the value
+  passed_key=a
+  passed_value = b
+end
+
+#IMPLIMENTATION 
+if self[passed_key].nil?
+  self.merge!({passed_key =&gt; passed_value})
+else #if the key passed exists, then take current value of key and put it in array w/ passed valued
+  temp = self[passed_key] #grab current value of existing key
+    if temp.class == Array #if the existing value is already an array then add to that array
+      self[passed_key] &lt;&lt; passed_value
+    else
+      self[passed_key] = [temp,passed_value] #create an array with original value and passed value
+  end
+end
+
+return self
+</code></pre>
+
+<p>  end</p>
+
+<p>  def self.array</p>
+
+<pre><code>Hash.new {|hash, key| hash[key] = []} 
+</code></pre>
+
+<p>  end</p>
+
+<p>end</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;two&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">&lt;</span><span class="o">&lt;</span><span class="ss">:c</span><span class="p">,</span><span class="s2">&quot;three&quot;</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#####The optional b parameter</span>
+</span><span class='line'><span class="n">I</span> <span class="n">added</span> <span class="n">an</span> <span class="n">optional</span> <span class="n">parameter</span> <span class="sb">`b`</span> <span class="n">which</span> <span class="n">allows</span> <span class="n">you</span> <span class="n">to</span> <span class="n">pass</span> <span class="mi">2</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">the</span> <span class="n">first</span> <span class="n">being</span> <span class="n">the</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">second</span> <span class="n">being</span> <span class="n">the</span> <span class="n">value</span><span class="o">.</span> <span class="no">Unfortunately</span><span class="p">,</span> <span class="n">ruby</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">let</span> <span class="n">you</span> <span class="n">use</span> <span class="n">the</span> <span class="n">space</span> <span class="sb">`&lt;&lt; `</span> <span class="n">shortcut</span> <span class="n">explained</span> <span class="n">above</span> <span class="k">when</span> <span class="n">passing</span> <span class="n">two</span> <span class="n">parameters</span><span class="o">.</span> <span class="no">Instead</span><span class="p">,</span> <span class="n">the</span> <span class="n">only</span> <span class="n">way</span> <span class="n">to</span> <span class="n">pass</span> <span class="n">this</span> <span class="n">second</span> <span class="n">parameter</span> <span class="p">(</span><span class="n">as</span> <span class="n">far</span> <span class="n">as</span> <span class="n">I</span> <span class="n">know</span><span class="p">)</span> <span class="n">is</span> <span class="n">using</span> <span class="n">the</span> <span class="sb">`hash1.&lt;&lt; key,value`</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The rest of this new <code>&lt;&lt;</code> method expects only one parameter, thus the space <code>&lt;&lt;</code> space can be used.</p>
-
-<p>The initial if statements determine the class type of the parameter passed and break it into a key and a value assigned to <code>passed_key</code> and <code>passed_value</code> respectively.</p>
-
-<p>The array method conditional allows you to pass a single parameter as an array. The first element of the array will be treated as the key and the subsequent ones will be values. If there are multiple values passed they are kept in array.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;two&quot;</span><span class="p">}</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="ss">:c</span><span class="p">,</span> <span class="s2">&quot;three&quot;</span><span class="o">]</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The first step under #IMPLIMENTATION is to see if the hash that is being added to already has a key with the same name as the key bing passed. When accessing a non existent hash key, the ruby interpreter will return nil. Thus if <code>self[passed_key].nil?</code> equals true, then the key does not exist in the original hash and a simple merge! can be used.</p>
-
-<p>If the key does exist, then the existing value is put into an array and the passed value is added to that array. If the existing value is already an array then the passed value is added to the array.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="p">{</span><span class="ss">:a</span> <span class="o">=&gt;</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span> <span class="o">=&gt;</span> <span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="s2">&quot;additional value&quot;</span><span class="o">]</span><span class="p">}</span> <span class="o">&lt;&lt;</span> <span class="p">{</span><span class="ss">:c</span> <span class="o">=&gt;</span> <span class="s2">&quot;a third value&quot;</span><span class="p">}</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span><span class="o">=&gt;[</span><span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="s2">&quot;additional value&quot;</span><span class="p">,</span> <span class="s2">&quot;a third value&quot;</span><span class="o">]</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>The final bit</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">array</span>
-</span><span class='line'>    <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span><span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="o">|</span> <span class="nb">hash</span><span class="o">[</span><span class="n">key</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span><span class="p">}</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This method is a little different from the main topic of the post. However, while I was ducking punching the hash class I figured I&rsquo;d add in a simple but very useful functionality that also relates to the <code>&lt;&lt;</code>. This functionality is based on fellow classmate <a href="http://pcrglennon.github.io/blog/2014/06/10/rubys-hash-dot-new-and-%7B%7D/">Peter&rsquo;s blog post</a> regarding initializing a hash with empty array values.</p>
-
-<p>Instead of having to type out <code>a = Hash.new {|hash, key| hash[key] = []}</code> I can just type <code>a = Hash.array</code>. Both of these initialize an empty hash with a default value of an empty array. This allows you to  add to the hash by specifying a new or existing key and using a shovel to add to the array.</p>
+<p>ruby
+{:a => &ldquo;one&rdquo;, :b => &ldquo;two&rdquo;}.&lt;&lt; :c,&ldquo;three&rdquo;
+=> {:a=>&ldquo;one&rdquo;, :b=>&ldquo;two&rdquo;, :c=>&ldquo;three&rdquo;}</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -338,16 +266,68 @@ Below is my full Hash class duck punch, followed by some explanations.</p>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">a</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">array</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="p">{}</span>
-</span><span class='line'><span class="n">a</span><span class="o">[</span><span class="ss">:new_key</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Value to be added to value array&quot;</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;Value to be added to value array&quot;</span><span class="o">]</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">The</span> <span class="n">rest</span> <span class="n">of</span> <span class="n">this</span> <span class="kp">new</span> <span class="sb">`&lt;&lt;`</span> <span class="nb">method</span> <span class="n">expects</span> <span class="n">only</span> <span class="n">one</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">thus</span> <span class="n">the</span> <span class="n">space</span> <span class="sb">`&lt;&lt;`</span> <span class="n">space</span> <span class="n">can</span> <span class="n">be</span> <span class="n">used</span><span class="o">.</span>
 </span><span class='line'>
-</span><span class='line'><span class="n">a</span>
-</span><span class='line'><span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:new_key</span><span class="o">=&gt;[</span><span class="s2">&quot;Value to be added to value array&quot;</span><span class="o">]</span><span class="p">}</span>
+</span><span class='line'><span class="c1">#####The conditional class checks at the top</span>
+</span><span class='line'><span class="no">The</span> <span class="n">initial</span> <span class="k">if</span> <span class="n">statements</span> <span class="n">determine</span> <span class="n">the</span> <span class="k">class</span> <span class="n">type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">parameter</span> <span class="n">passed</span> <span class="ow">and</span> <span class="k">break</span> <span class="n">it</span> <span class="n">into</span> <span class="n">a</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">a</span> <span class="n">value</span> <span class="n">assigned</span> <span class="n">to</span> <span class="sb">`passed_key`</span> <span class="ow">and</span> <span class="sb">`passed_value`</span> <span class="n">respectively</span><span class="o">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">The</span> <span class="n">array</span> <span class="nb">method</span> <span class="n">conditional</span> <span class="n">allows</span> <span class="n">you</span> <span class="n">to</span> <span class="n">pass</span> <span class="n">a</span> <span class="n">single</span> <span class="n">parameter</span> <span class="n">as</span> <span class="n">an</span> <span class="n">array</span><span class="o">.</span> <span class="no">The</span> <span class="n">first</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">array</span> <span class="n">will</span> <span class="n">be</span> <span class="n">treated</span> <span class="n">as</span> <span class="n">the</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">subsequent</span> <span class="n">ones</span> <span class="n">will</span> <span class="n">be</span> <span class="n">values</span><span class="o">.</span> <span class="no">If</span> <span class="n">there</span> <span class="n">are</span> <span class="n">multiple</span> <span class="n">values</span> <span class="n">passed</span> <span class="n">they</span> <span class="n">are</span> <span class="n">kept</span> <span class="k">in</span> <span class="n">array</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>ruby
+{:a => &ldquo;one&rdquo;, :b => &ldquo;two&rdquo;} &lt;&lt; [:c, &ldquo;three&rdquo;]
+=> {:a=>&ldquo;one&rdquo;, :b=>&ldquo;two&rdquo;, :c=>&ldquo;three&rdquo;}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#####The implementation </span>
+</span><span class='line'><span class="no">The</span> <span class="n">first</span> <span class="n">step</span> <span class="n">under</span> <span class="c1">#IMPLEMENTATION is to see if the hash that is being added to already has a key with the same name as the key bing passed. When accessing a non existent hash key, the ruby interpreter will return nil. Thus if `self[passed_key].nil?` equals true, then the key does not exist in the original hash and a simple merge! can be used. </span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="no">If</span> <span class="n">the</span> <span class="n">key</span> <span class="n">does</span> <span class="n">exist</span><span class="p">,</span> <span class="k">then</span> <span class="n">the</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">is</span> <span class="n">put</span> <span class="n">into</span> <span class="n">an</span> <span class="n">array</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">passed</span> <span class="n">value</span> <span class="n">is</span> <span class="n">added</span> <span class="n">to</span> <span class="n">that</span> <span class="n">array</span><span class="o">.</span> <span class="no">If</span> <span class="n">the</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">is</span> <span class="n">already</span> <span class="n">an</span> <span class="n">array</span> <span class="k">then</span> <span class="n">the</span> <span class="n">passed</span> <span class="n">value</span> <span class="n">is</span> <span class="n">added</span> <span class="n">to</span> <span class="n">the</span> <span class="n">array</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ruby
+ {:a => &ldquo;one&rdquo;, :b => &ldquo;two&rdquo;, :c => [&ldquo;three&rdquo;, &ldquo;additional value&rdquo;]} &lt;&lt; {:c => &ldquo;a third value&rdquo;}
+=> {:a=>&ldquo;one&rdquo;, :b=>&ldquo;two&rdquo;, :c=>[&ldquo;three&rdquo;, &ldquo;additional value&rdquo;, &ldquo;a third value&rdquo;]}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">####The final bit</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ruby
+def self.array</p>
+
+<pre><code>Hash.new {|hash, key| hash[key] = []} 
+</code></pre>
+
+<p>end</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">This</span> <span class="nb">method</span> <span class="n">is</span> <span class="n">a</span> <span class="n">little</span> <span class="n">different</span> <span class="n">from</span> <span class="n">the</span> <span class="n">main</span> <span class="n">topic</span> <span class="n">of</span> <span class="n">the</span> <span class="n">post</span><span class="o">.</span> <span class="no">However</span><span class="p">,</span> <span class="k">while</span> <span class="n">I</span> <span class="n">was</span> <span class="n">ducking</span> <span class="n">punching</span> <span class="n">the</span> <span class="nb">hash</span> <span class="k">class</span> <span class="nc">I</span> <span class="n">figured</span> <span class="n">I</span><span class="s1">&#39;d add in a simple but very useful functionality that also relates to the `&lt;&lt;`. This functionality is based on fellow classmate [Peter&#39;</span><span class="n">s</span> <span class="n">blog</span> <span class="n">post</span><span class="o">]</span><span class="p">(</span><span class="ss">http</span><span class="p">:</span><span class="sr">//</span><span class="n">pcrglennon</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">blog</span><span class="o">/</span><span class="mi">2014</span><span class="o">/</span><span class="mo">06</span><span class="o">/</span><span class="mi">10</span><span class="o">/</span><span class="n">rubys</span><span class="o">-</span><span class="nb">hash</span><span class="o">-</span><span class="n">dot</span><span class="o">-</span><span class="kp">new</span><span class="o">-</span><span class="ow">and</span><span class="o">-%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">/</span><span class="p">)</span> <span class="n">regarding</span> <span class="n">initializing</span> <span class="n">a</span> <span class="nb">hash</span> <span class="n">with</span> <span class="n">empty</span> <span class="n">array</span> <span class="n">values</span><span class="o">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Instead</span> <span class="n">of</span> <span class="n">having</span> <span class="n">to</span> <span class="n">type</span> <span class="n">out</span> <span class="sb">`a = Hash.new {|hash, key| hash[key] = []}`</span> <span class="n">I</span> <span class="n">can</span> <span class="n">just</span> <span class="n">type</span> <span class="sb">`a = Hash.array`</span><span class="o">.</span> <span class="no">Both</span> <span class="n">of</span> <span class="n">these</span> <span class="kp">initialize</span> <span class="n">an</span> <span class="n">empty</span> <span class="nb">hash</span> <span class="n">with</span> <span class="n">a</span> <span class="n">default</span> <span class="n">value</span> <span class="n">of</span> <span class="n">an</span> <span class="n">empty</span> <span class="n">array</span><span class="o">.</span> <span class="no">This</span> <span class="n">allows</span> <span class="n">you</span> <span class="n">to</span>  <span class="n">add</span> <span class="n">to</span> <span class="n">the</span> <span class="nb">hash</span> <span class="n">by</span> <span class="n">specifying</span> <span class="n">a</span> <span class="kp">new</span> <span class="ow">or</span> <span class="n">existing</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">using</span> <span class="n">a</span> <span class="n">shovel</span> <span class="n">to</span> <span class="n">add</span> <span class="n">to</span> <span class="n">the</span> <span class="n">array</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ruby
+a = Hash.array
+=> {}</p>
+
+<p>a[:new_key] &lt;&lt; &ldquo;Value to be added to value array&rdquo;
+=> [&ldquo;Value to be added to value array&rdquo;]</p>
+
+<p>a
+=> {:new_key=>[&ldquo;Value to be added to value array&rdquo;]}
+&#8220;`</p>
 
 <h2>Practicality</h2>
 
