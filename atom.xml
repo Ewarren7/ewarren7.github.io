@@ -4,7 +4,7 @@
   <title><![CDATA[Musings of a Flatiron Ruby Student]]></title>
   <link href="http://Ewarren7.github.io/atom.xml" rel="self"/>
   <link href="http://Ewarren7.github.io/"/>
-  <updated>2014-06-15T23:34:35-04:00</updated>
+  <updated>2014-06-15T23:36:46-04:00</updated>
   <id>http://Ewarren7.github.io/</id>
   <author>
     <name><![CDATA[Edward Warren]]></name>
@@ -45,8 +45,6 @@
 </span><span class='line'> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:a</span><span class="o">=&gt;</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="ss">:b</span><span class="o">=&gt;</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="ss">:c</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="ss">:d</span><span class="o">=&gt;</span><span class="s2">&quot;three&quot;</span><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-<p>&amp;</p>
 
 <p><code>store</code>:</p>
 
@@ -102,7 +100,7 @@
 
 <p>Achieving the above can be done by adding to / duck punching the Hash class. Defining a <code>class Hash</code> at the top of your ruby script is the simplest way to achieve this. The ruby interpretor will read from this version of the Hash class before looking up the main Hash class included with ruby. Any new methods added will exist in addition to the original Hash class methods.</p>
 
-<p>A very simple implementation</p>
+<h3>A very simple implementation</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
