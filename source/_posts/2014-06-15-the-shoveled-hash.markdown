@@ -14,19 +14,19 @@ Now that my studies have moved into classes and duck punching I decided I would 
 ##A hash without a shovel
 
 If you ever attempted to use a shovel with a hash, the ruby interpreter greets you with:
-``` Ruby
+```ruby
 {:a => "one", :b => "two", :c => "three"} << {:d => "three"}
 =>NoMethodError: undefined method `<<' for {:a=>"one", :b=>"two", :c=>"three"}:Hash
 ```
 In the above scenario, the main ways to add the `{:d => "three"}` to the existing hash would be to use `merge!` or `store`
 
 `merge!` 
-``` Ruby
+```ruby
 {:a => "one", :b => "two", :c => "three"}.merge!({:d => "three"})
  => {:a=>"one", :b=>"two", :c=>"three", :d=>"three"} 
  ```
 `store`
- ``` Ruby
+ ```ruby
 test = {:a => "one", :b => "two", :c => "three"}
  => {:a=>"one", :b=>"two", :c=>"three"} 
 
@@ -40,21 +40,21 @@ Despite the verbosity of the above methods, they also have the affect of replaci
 
 ##A hash with a shovel is a beautiful thing 
 
-``` Ruby
+```ruby
 {:a => "one", :b => "two"} << {:c => "three"}
 => {:a=>"one", :b=>"two", :c=>"three"}
 ```
 
 The above seems so simple and elegant. Taking it further, what if the key you shovel already exists? Wouldn't it be nice if the `<<` method took the existing value in the hash and put it into an array and then added the passed values? I think so.
 
-``` Ruby
+```ruby
 {:a => "one", :b => "two"} << {:b => "an additional b value!!"}
 => {:a=>"one", :b=>["two", "an additional b value!!"]}
 
 ```
 
 What if the the key exists and it has a __value that is already an array__? Wouldn't it be nice if the shoveled value was justed added to the array?
-``` Ruby 
+```ruby 
 {:a => "one", :b => ["two", 2]} << {:b => "an additional b value!!"}
 => {:a=>"one", :b=>["two", 2, "an additional b value!!"]}
 ```
@@ -63,7 +63,7 @@ What if the the key exists and it has a __value that is already an array__? Woul
 Achieving the above can be done by adding to / duck punching the Hash class. Defining a `class Hash` at the top of your ruby script is the simplest way to achieve this. The ruby interpretor will read from this version of the Hash class before looking up the main Hash class included with ruby. Any new methods added will exist in addition to the original Hash class methods. 
 
 A very simple implementation
-``` Ruby
+```ruby
 class Hash
   def <<(a)
     self.merge!(a)
@@ -74,7 +74,7 @@ end
 With this simple class method added to Hash class you can now shovel an existing hash with another hash passed in the `{}` format. 
 The ruby interpreter allows you to do `hash1 << hash2` whereas most other methods would require the `.`, ie `hash1 << hash2` is the same as hash1.<< hash2. In the above the (a) is the passed parameter given after the `<<` 
 
-``` Ruby
+```ruby
 {:a => "alpha"} << {:b => "bravo"}
  => {:a=>"alpha", :b=>"bravo"} 
 ```
@@ -82,7 +82,7 @@ The ruby interpreter allows you to do `hash1 << hash2` whereas most other method
 While the above is great, the << method needs to grow a bit to give me the full functionality I described above (plus more!)
 Below is my full Hash class duck punch, followed by some explanations. 
 
-``` Ruby
+```ruby
 class Hash
   def <<(a, b=nil)
     if a.class == Hash
@@ -122,7 +122,7 @@ end
 ```
 
 I added an optional parameter `b` which allows you to pass 2 parameters, the first being the key and the second being the value. Unfortunately, ruby does not let you use the space `<< ` shortcut explained above when passing two parameters. Instead, the only way to pass this second parameter (as far as I know) is using the `hash1.<< key,value`. 
-``` Ruby
+```ruby
 {:a => "one", :b => "two"}.<<:c,"three"
 => {:a=>"one", :b=>"two", :c=>"three"}
 ```
@@ -132,7 +132,7 @@ The rest of this new `<<` method expects only one parameter, thus the space `<<`
 The initial if statements determine the class type of the parameter passed and break it into a key and a value assigned to `passed_key` and `passed_value` respectively. 
 
 The array method conditional allows you to pass a single parameter as an array. The first element of the array will be treated as the key and the subsequent ones will be values. If there are multiple values passed they are kept in array.
-``` Ruby
+```ruby
 {:a => "one", :b => "two"} << [:c, "three"]
 => {:a=>"one", :b=>"two", :c=>"three"}
 ```
@@ -142,13 +142,13 @@ The first step under #IMPLIMENTATION is to see if the hash that is being added t
 
 If the key does exist, then the existing value is put into an array and the passed value is added to that array. If the existing value is already an array then the passed value is added to the array. 
 
-``` Ruby
+```ruby
  {:a => "one", :b => "two", :c => ["three", "additional value"]} << {:c => "a third value"}
 => {:a=>"one", :b=>"two", :c=>["three", "additional value", "a third value"]}
 ```
 
 ####The final bit
-``` Ruby
+```ruby
 def self.array 
     Hash.new {|hash, key| hash[key] = []} 
 end 
@@ -156,7 +156,7 @@ end
 This method is a little different from the main topic of the post. However, while I was ducking punching the hash class I figured I'd add in a simple but very useful functionality that also relates to the `<<`. This functionality is based on fellow classmate [Peter's blog post](http://pcrglennon.github.io/blog/2014/06/10/rubys-hash-dot-new-and-%7B%7D/) regarding initializing a hash with empty array values. 
 
 Instead of having to type out `a = Hash.new {|hash, key| hash[key] = []}` I can just type `a = Hash.array`. Both of these initialize an empty hash with a default value of an empty array. This allows you to  add to the hash by specifying a new or existing key and using a shovel to add to the array. 
-``` Ruby
+```ruby
 a = Hash.array
 => {}
 a[:new_key] << "Value to be added to value array" 
