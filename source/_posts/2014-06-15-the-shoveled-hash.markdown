@@ -5,7 +5,7 @@ date: 2014-06-15 18:50:54 -0400
 comments: true
 categories: 
 ---
-#"Where's My Shovel" asks the Hash
+#Where's My Shovel asks the Hash
 
 As a typical Ruby student, I became acquainted with arrays before hashes. The array shovel, aka `<<` really made sense to me and once I moved on to Hashes I found it very disconcerting that hashes were left shovelless. 
 
@@ -170,10 +170,5 @@ a
 It is admittedly not convenient to add this lengthy duck punch at the top of your scripts. You could put this code in a separate file and `include` it, but not only does every person running your ruby code also need the class modification, doing this may create confusion since it is not part of the normal ruby Hash class. 
 
 With that said, this new method does add functionality that comports with the style already used for `<<` and arrays, thus giving a code reader contextual clues that strongly hint at the methods functionality. Additionally, it is my hope that this experiment provides a basis for the consideration and discussion of possibly seeing how a shovel could be introduced as an official method to the Hash class.  
-
-
-
-
-
 
 *Tested using Ruby Version 2.12*
