@@ -5,11 +5,11 @@ date: 2014-06-15 18:50:54 -0400
 comments: true
 categories: 
 ---
-#Where's My Shovel asks the Hash
+##'Where's My Shovel' asks the Hash
 
 As a typical Ruby student, I became acquainted with arrays before hashes. The array shovel, aka `<<` really made sense to me and once I moved on to Hashes I found it very disconcerting that hashes were left shovelless. 
 
-Now that my studies have moved into classes and duck punching I decided I would try and give my hashes shovels and see what became of it.
+Now that my studies have moved into classes and duck punching I decided I would try and give my hashes some shovels and see what became of it.
 
 ##A hash without a shovel
 
@@ -18,15 +18,19 @@ If you ever attempted to use a shovel with a hash, the ruby interpreter greets y
 {:a => "one", :b => "two", :c => "three"} << {:d => "three"}
 =>NoMethodError: undefined method `<<' for {:a=>"one", :b=>"two", :c=>"three"}:Hash
 ```
+
 In the above scenario, the main ways to add the `{:d => "three"}` to the existing hash would be to use `merge!` or `store`
 
-`merge!` 
+`merge!`:
+
 ```ruby
 {:a => "one", :b => "two", :c => "three"}.merge!({:d => "three"})
  => {:a=>"one", :b=>"two", :c=>"three", :d=>"three"} 
- ```
-`store`
- ```ruby
+```
+
+`store`:
+
+```ruby
 test = {:a => "one", :b => "two", :c => "three"}
  => {:a=>"one", :b=>"two", :c=>"three"} 
 
@@ -36,6 +40,7 @@ test.store(:d, "three")
 test
  => {:a=>"one", :b=>"two", :c=>"three", :d=>"three"} 
 ```
+
 Despite the verbosity of the above methods, they also have the affect of replacing a key's value if you `merge!` or `store` using a key that already exists in the hash. 
 
 ##A hash with a shovel is a beautiful thing 
@@ -62,7 +67,7 @@ What if the the key exists and it has a __value that is already an array__? Woul
 ###Making the above a reality - duck punching the Hash class
 Achieving the above can be done by adding to / duck punching the Hash class. Defining a `class Hash` at the top of your ruby script is the simplest way to achieve this. The ruby interpretor will read from this version of the Hash class before looking up the main Hash class included with ruby. Any new methods added will exist in addition to the original Hash class methods. 
 
-A very simple implementation
+###A very simple implementation
 ```ruby
 class Hash
   def <<(a)
@@ -72,14 +77,14 @@ end
 ``` 
 
 With this simple class method added to Hash class you can now shovel an existing hash with another hash passed in the `{}` format. 
-The ruby interpreter allows you to do `hash1 << hash2` whereas most other methods would require the `.`, ie `hash1 << hash2` is the same as hash1.<< hash2. In the above the (a) is the passed parameter given after the `<<` 
+The ruby interpreter allows you to do `hash1 << hash2` whereas most other methods would require the `.`, ie `hash1 << hash2` is the same as `hash1.<< hash2`. In the above the (a) is the passed parameter given after the `<<` 
 
 ```ruby
 {:a => "alpha"} << {:b => "bravo"}
  => {:a=>"alpha", :b=>"bravo"} 
 ```
 ###Done with the baby steps
-While the above is great, the << method needs to grow a bit to give me the full functionality I described above (plus more!)
+While the above is great, the `<<` method needs to grow a bit to give me the full functionality I described above (plus more!)
 Below is my full Hash class duck punch, followed by some explanations. 
 
 ```ruby
@@ -99,7 +104,7 @@ class Hash
       passed_value = b
     end
     
-    #IMPLIMENTATION 
+    #IMPLEMENTATION 
     if self[passed_key].nil?
       self.merge!({passed_key => passed_value})
     else #if the key passed exists, then take current value of key and put it in array w/ passed valued
@@ -120,24 +125,25 @@ class Hash
 
 end
 ```
-
+#####The optional b parameter
 I added an optional parameter `b` which allows you to pass 2 parameters, the first being the key and the second being the value. Unfortunately, ruby does not let you use the space `<< ` shortcut explained above when passing two parameters. Instead, the only way to pass this second parameter (as far as I know) is using the `hash1.<< key,value`. 
 ```ruby
-{:a => "one", :b => "two"}.<<:c,"three"
+{:a => "one", :b => "two"}.<< :c,"three"
 => {:a=>"one", :b=>"two", :c=>"three"}
 ```
 
 The rest of this new `<<` method expects only one parameter, thus the space `<<` space can be used.
 
+#####The conditional class checks at the top
 The initial if statements determine the class type of the parameter passed and break it into a key and a value assigned to `passed_key` and `passed_value` respectively. 
 
-The array method conditional allows you to pass a single parameter as an array. The first element of the array will be treated as the key and the subsequent ones will be values. If there are multiple values passed they are kept in array.
+The array method conditional allows you to pass a single parameter as an array containing a key with one or more values. The first element of the array will be treated as the key and the subsequent ones will be values. If there are multiple values passed they are kept in an array.
 ```ruby
 {:a => "one", :b => "two"} << [:c, "three"]
 => {:a=>"one", :b=>"two", :c=>"three"}
 ```
-
-The first step under #IMPLIMENTATION is to see if the hash that is being added to already has a key with the same name as the key bing passed. When accessing a non existent hash key, the ruby interpreter will return nil. Thus if `self[passed_key].nil?` equals true, then the key does not exist in the original hash and a simple merge! can be used. 
+#####The implementation 
+The first step under #IMPLEMENTATION is to see if the hash that is being added to already has a key with the same name as the key bing passed. When accessing a non existent hash key, the ruby interpreter will return nil. Thus if `self[passed_key].nil?` equals true, then the key does not exist in the original hash and a simple merge! can be used. 
 
 
 If the key does exist, then the existing value is put into an array and the passed value is added to that array. If the existing value is already an array then the passed value is added to the array. 
@@ -159,6 +165,7 @@ Instead of having to type out `a = Hash.new {|hash, key| hash[key] = []}` I can 
 ```ruby
 a = Hash.array
 => {}
+
 a[:new_key] << "Value to be added to value array" 
 => ["Value to be added to value array"]
 
