@@ -4,7 +4,7 @@
   <title><![CDATA[Musings of a Flatiron Ruby Student]]></title>
   <link href="http://Ewarren7.github.io/atom.xml" rel="self"/>
   <link href="http://Ewarren7.github.io/"/>
-  <updated>2014-06-15T23:36:46-04:00</updated>
+  <updated>2014-07-01T07:19:17-04:00</updated>
   <id>http://Ewarren7.github.io/</id>
   <author>
     <name><![CDATA[Edward Warren]]></name>
@@ -12,6 +12,286 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Geolocation in Ruby / Sinatra]]></title>
+    <link href="http://Ewarren7.github.io/blog/2014/06/29/getting-geolocation-in-ruby-slash-sinatra/"/>
+    <updated>2014-06-29T17:44:34-04:00</updated>
+    <id>http://Ewarren7.github.io/blog/2014/06/29/getting-geolocation-in-ruby-slash-sinatra</id>
+    <content type="html"><![CDATA[<h1>Getting Location in Ruby</h1>
+
+<p>It is now very common to determine a user&rsquo;s location by using HTML5 Geolocation. Below, I&rsquo;ll discuss how to pass this geolocation information to a Ruby Sinatra environment by using the post method and some JavaScript.</p>
+
+<p>While the HTML5 geolocation is great, its not available if you are only operating in a command line interface (CLI). Thus, I&rsquo;d like to first point out a way to get location when your ruby program is command line only.</p>
+
+<h2>Location in CLI Only Environment</h2>
+
+<p>This is a very simple way to get surprisingly accurate (at least in my few tests in NYC) location information using the IP of the computer running the Ruby app, Nokogiri web scraping, and one&rsquo;s IP address.</p>
+
+<p>You will need gem &lsquo;nokogiri&rsquo; and to require &lsquo;open-uri&rsquo;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">location</span>
+</span><span class='line'>  <span class="n">page</span> <span class="o">=</span> <span class="s2">&quot;http://freegeoip.net/json/&quot;</span>
+</span><span class='line'>  <span class="n">doc</span> <span class="o">=</span> <span class="ss">Nokogiri</span><span class="p">:</span><span class="ss">:HTML</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="s1">&#39;User-Agent&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ruby&#39;</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">loc</span> <span class="o">=</span> <span class="sr">/(latitude)(\&quot;:)(\d+.\d+)(,\&quot;longitude\&quot;:)(-\d+.\d+)/</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">lat</span> <span class="o">=</span> <span class="n">loc</span><span class="o">[</span><span class="mi">3</span><span class="o">]</span>
+</span><span class='line'>  <span class="n">lon</span> <span class="o">=</span> <span class="n">loc</span><span class="o">[</span><span class="mi">5</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">return</span> <span class="o">[</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="o">]</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will query the site <a href="http://freegeoip.net/json">http://freegeoip.net/json</a> which in turn determines your public IP address and matches it against a database. Nokogiri then scrapes this result and then I use a Ruby regex match object to parse out the latitude and a longitude. Finally I return an array containing latidue and longitude.</p>
+
+<p>I found that <a href="http://freegeoip.net/json">http://freegeoip.net/json</a> was fairly accurate. There is a gem called geocoder that seems to use the same database but it seemed to do a lot more and required active record. When I created this, I already was using nokogiri in the project so this was an easy add on and just seemed simpler.</p>
+
+<h2>Location using HTML5 in a Sinatra environment</h2>
+
+<p>This describes how to use HTML5 Geolocation and javascript to send your longitude / latitude to the Sintra server using a http post request.</p>
+
+<h3>Overview</h3>
+
+<p>It starts by loading a page that says getting location and requests the user&rsquo;s location from their browser. Once it has a location, it loads a google map on the page showing it. While loading the map, javascript also fills in 2 hidden form values, one for latitude and the other longitude.</p>
+
+<p>The user then clicks the Submit Location button which will do a post request to the server at the address specified in the form&rsquo;s action attribute. Sinatra can then grab lat and long from the parmas variable and render a new page using erb or preform a redirect.</p>
+
+<p>I&rsquo;ll note that there may be a better way to do the following but this method seemed good enough and was within the scope of my current knowledge.</p>
+
+<h4>Step 1</h4>
+
+<p>This methods assume you are running a Ruby Sintra web based frame work.</p>
+
+<p>First, you would set a <code>get</code> controller for your page that will request the location from the user&rsquo;s browser using html. I used by root index page for this.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">erb</span> <span class="ss">:location</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Step 2</h4>
+
+<p>Next, you set up an ERB template that includes a hidden form. Once the user&rsquo;s browser responds to the geolocation request, this hidden form will be filled by JavaScript with the user&rsquo;s longitude and latitude.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;!</span><span class="n">DOCTYPE</span> <span class="n">html</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">html</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">body</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;demo&quot;</span><span class="o">&gt;</span><span class="n">Getting</span> <span class="n">your</span> <span class="n">location</span><span class="o">...</span> <span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">div</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;mapholder&quot;</span><span class="o">&gt;&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s">&quot;http://maps.google.com/maps/api/js?sensor=false&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">getLocation</span><span class="o">();</span>
+</span><span class='line'><span class="n">var</span> <span class="n">x</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="s">&quot;demo&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">function</span> <span class="nf">getLocation</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">navigator</span><span class="o">.</span><span class="na">geolocation</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">navigator</span><span class="o">.</span><span class="na">geolocation</span><span class="o">.</span><span class="na">getCurrentPosition</span><span class="o">(</span><span class="n">showPosition</span><span class="o">,</span><span class="n">showError</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">x</span><span class="o">.</span><span class="na">innerHTML</span> <span class="o">=</span> <span class="s">&quot;Geolocation is not supported by this browser.&quot;</span><span class="o">;}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">function</span> <span class="nf">showPosition</span><span class="o">(</span><span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">lat</span> <span class="o">=</span> <span class="n">position</span><span class="o">.</span><span class="na">coords</span><span class="o">.</span><span class="na">latitude</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">lon</span> <span class="o">=</span> <span class="n">position</span><span class="o">.</span><span class="na">coords</span><span class="o">.</span><span class="na">longitude</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="err">&#39;</span><span class="n">lat</span><span class="err">&#39;</span><span class="o">).</span><span class="na">value</span> <span class="o">=</span> <span class="n">lat</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="err">&#39;</span><span class="n">lon</span><span class="err">&#39;</span><span class="o">).</span><span class="na">value</span> <span class="o">=</span> <span class="n">lon</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">latlon</span> <span class="o">=</span> <span class="k">new</span> <span class="n">google</span><span class="o">.</span><span class="na">maps</span><span class="o">.</span><span class="na">LatLng</span><span class="o">(</span><span class="n">lat</span><span class="o">,</span> <span class="n">lon</span><span class="o">)</span>
+</span><span class='line'>    <span class="n">mapholder</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="err">&#39;</span><span class="n">mapholder</span><span class="err">&#39;</span><span class="o">)</span>
+</span><span class='line'>    <span class="n">mapholder</span><span class="o">.</span><span class="na">style</span><span class="o">.</span><span class="na">height</span><span class="o">=</span><span class="err">&#39;</span><span class="mi">250</span><span class="n">px</span><span class="err">&#39;</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">mapholder</span><span class="o">.</span><span class="na">style</span><span class="o">.</span><span class="na">width</span><span class="o">=</span><span class="err">&#39;</span><span class="mi">500</span><span class="n">px</span><span class="err">&#39;</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">var</span> <span class="n">myOptions</span><span class="o">={</span>
+</span><span class='line'>    <span class="nl">center:</span><span class="n">latlon</span><span class="o">,</span><span class="nl">zoom:</span><span class="mi">14</span><span class="o">,</span>
+</span><span class='line'>    <span class="nl">mapTypeId:</span><span class="n">google</span><span class="o">.</span><span class="na">maps</span><span class="o">.</span><span class="na">MapTypeId</span><span class="o">.</span><span class="na">ROADMAP</span><span class="o">,</span>
+</span><span class='line'>    <span class="nl">mapTypeControl:</span><span class="kc">false</span><span class="o">,</span>
+</span><span class='line'>    <span class="nl">navigationControlOptions:</span><span class="o">{</span><span class="nl">style:</span><span class="n">google</span><span class="o">.</span><span class="na">maps</span><span class="o">.</span><span class="na">NavigationControlStyle</span><span class="o">.</span><span class="na">SMALL</span><span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">var</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">google</span><span class="o">.</span><span class="na">maps</span><span class="o">.</span><span class="na">Map</span><span class="o">(</span><span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="s">&quot;mapholder&quot;</span><span class="o">),</span><span class="n">myOptions</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">var</span> <span class="n">marker</span> <span class="o">=</span> <span class="k">new</span> <span class="n">google</span><span class="o">.</span><span class="na">maps</span><span class="o">.</span><span class="na">Marker</span><span class="o">({</span><span class="nl">position:</span><span class="n">latlon</span><span class="o">,</span><span class="nl">map:</span><span class="n">map</span><span class="o">,</span><span class="nl">title:</span><span class="s">&quot;You are here!&quot;</span><span class="o">});</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">function</span> <span class="nf">showError</span><span class="o">(</span><span class="n">error</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">switch</span><span class="o">(</span><span class="n">error</span><span class="o">.</span><span class="na">code</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="n">error</span><span class="o">.</span><span class="na">PERMISSION_DENIED</span><span class="o">:</span>
+</span><span class='line'>            <span class="n">x</span><span class="o">.</span><span class="na">innerHTML</span> <span class="o">=</span> <span class="s">&quot;User denied the request for Geolocation.&quot;</span>
+</span><span class='line'>            <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="n">error</span><span class="o">.</span><span class="na">POSITION_UNAVAILABLE</span><span class="o">:</span>
+</span><span class='line'>            <span class="n">x</span><span class="o">.</span><span class="na">innerHTML</span> <span class="o">=</span> <span class="s">&quot;Location information is unavailable.&quot;</span>
+</span><span class='line'>            <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="n">error</span><span class="o">.</span><span class="na">TIMEOUT</span><span class="o">:</span>
+</span><span class='line'>            <span class="n">x</span><span class="o">.</span><span class="na">innerHTML</span> <span class="o">=</span> <span class="s">&quot;The request to get user location timed out.&quot;</span>
+</span><span class='line'>            <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="n">error</span><span class="o">.</span><span class="na">UNKNOWN_ERROR</span><span class="o">:</span>
+</span><span class='line'>            <span class="n">x</span><span class="o">.</span><span class="na">innerHTML</span> <span class="o">=</span> <span class="s">&quot;An unknown error occurred.&quot;</span>
+</span><span class='line'>            <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">form</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;myForm&quot;</span> <span class="n">action</span><span class="o">=</span><span class="err">&#39;</span><span class="o">/</span><span class="n">go</span><span class="err">&#39;</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="err">&#39;</span><span class="n">hidden</span><span class="err">&#39;</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;lat&quot;</span> <span class="n">name</span><span class="o">=</span><span class="err">&#39;</span><span class="n">lat</span><span class="err">&#39;</span> <span class="n">value</span><span class="o">=</span><span class="err">&#39;&#39;</span> <span class="o">/&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="err">&#39;</span><span class="n">hidden</span><span class="err">&#39;</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;lon&quot;</span> <span class="n">name</span><span class="o">=</span><span class="err">&#39;</span><span class="n">lon</span><span class="err">&#39;</span> <span class="n">value</span><span class="o">=</span><span class="err">&#39;&#39;</span> <span class="o">/&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="err">&#39;</span><span class="n">submit</span><span class="err">&#39;</span> <span class="n">name</span><span class="o">=</span><span class="err">&#39;</span><span class="n">submit</span><span class="err">&#39;</span> <span class="n">value</span><span class="o">=</span><span class="err">&#39;</span><span class="n">Submit</span> <span class="n">Location</span><span class="err">&#39;</span> <span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">form</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">body</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">html</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+In the <code>showPosition(position)</code> function above the following JavaScript code causes the hidden form at the bottom to be filled with the user&rsquo;s longitude and latitude values.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="err">&#39;</span><span class="n">lat</span><span class="err">&#39;</span><span class="o">).</span><span class="na">value</span> <span class="o">=</span> <span class="n">lat</span><span class="o">;</span>
+</span><span class='line'><span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="err">&#39;</span><span class="n">lon</span><span class="err">&#39;</span><span class="o">).</span><span class="na">value</span> <span class="o">=</span> <span class="n">lon</span><span class="o">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Step 3</h4>
+
+<p>Setup up a post controller that receives the post request from the form submission.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">post</span> <span class="s1">&#39;/go&#39;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="vi">@lat</span> <span class="o">=</span> <span class="n">params</span><span class="o">[</span><span class="ss">:lat</span><span class="o">]</span>
+</span><span class='line'>    <span class="vi">@lon</span> <span class="o">=</span> <span class="n">params</span><span class="o">[</span><span class="ss">:lon</span><span class="o">]</span>
+</span><span class='line'>    <span class="n">erb</span> <span class="ss">:index</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The parmas var is automatically passed to the post method in Sinatra  and you can then extract the lat and lon by calling the symbol version of their names as they were labled in the form. You can then pass the location info to another method or make them directly available to the erb template.</p>
+
+<h3>Using both HTML5 Geolocation with an IP based fallback</h3>
+
+<p>You can use both the methods described above, reserving the IP based geolocation for situations in which HTML5 Geolocation fails. While you could probably do this with Javascript and error handling, I achieved this by passing the location to a Ruby class method. By checking if the lat or lon paramaters were nil, I was able to conditionally fall back to the IP based lookup.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">set_location</span> <span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">lat</span><span class="o">.</span><span class="n">nil?</span><span class="o">||</span> <span class="n">lon</span><span class="o">.</span><span class="n">nil?</span> <span class="c1">#if html5 location isn&#39;t passed, revert to this method</span>
+</span><span class='line'>      <span class="n">page</span> <span class="o">=</span> <span class="s2">&quot;http://freegeoip.net/json/&quot;</span>
+</span><span class='line'>      <span class="n">doc</span> <span class="o">=</span> <span class="ss">Nokogiri</span><span class="p">:</span><span class="ss">:HTML</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="s1">&#39;User-Agent&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36&#39;</span><span class="p">))</span>
+</span><span class='line'>      <span class="n">loc</span> <span class="o">=</span> <span class="sr">/(latitude)(\&quot;:)(\d+.\d+)(,\&quot;longitude\&quot;:)(-\d+.\d+)/</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span><span class='line'>      <span class="vi">@lat</span> <span class="o">=</span> <span class="n">loc</span><span class="o">[</span><span class="mi">3</span><span class="o">]</span>
+</span><span class='line'>      <span class="vi">@lon</span> <span class="o">=</span> <span class="n">loc</span><span class="o">[</span><span class="mi">5</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="vi">@lat</span> <span class="o">=</span> <span class="n">lat</span>
+</span><span class='line'>      <span class="vi">@lon</span> <span class="o">=</span> <span class="n">lon</span>
+</span><span class='line'>    <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>HTML5 Geolocation code based on <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> templates</em></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The Shoveled Hash]]></title>
@@ -184,7 +464,7 @@ Below is my full Hash class duck punch, followed by some explanations.</p>
 </span><span class='line'>      <span class="n">passed_value</span> <span class="o">=</span> <span class="n">b</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="c1">#IMPLIMENTATION </span>
+</span><span class='line'>    <span class="c1">#IMPLEMENTATION </span>
 </span><span class='line'>    <span class="k">if</span> <span class="nb">self</span><span class="o">[</span><span class="n">passed_key</span><span class="o">].</span><span class="n">nil?</span>
 </span><span class='line'>      <span class="nb">self</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="n">passed_key</span> <span class="o">=&gt;</span> <span class="n">passed_value</span><span class="p">})</span>
 </span><span class='line'>    <span class="k">else</span> <span class="c1">#if the key passed exists, then take current value of key and put it in array w/ passed valued</span>
@@ -224,7 +504,7 @@ Below is my full Hash class duck punch, followed by some explanations.</p>
 
 <p>The initial if statements determine the class type of the parameter passed and break it into a key and a value assigned to <code>passed_key</code> and <code>passed_value</code> respectively.</p>
 
-<p>The array method conditional allows you to pass a single parameter as an array. The first element of the array will be treated as the key and the subsequent ones will be values. If there are multiple values passed they are kept in array.</p>
+<p>The array method conditional allows you to pass a single parameter as an array containing a key with one or more values. The first element of the array will be treated as the key and the subsequent ones will be values. If there are multiple values passed they are kept in an array.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

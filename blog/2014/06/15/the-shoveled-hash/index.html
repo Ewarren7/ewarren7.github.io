@@ -257,7 +257,7 @@ Below is my full Hash class duck punch, followed by some explanations.</p>
 </span><span class='line'>      <span class="n">passed_value</span> <span class="o">=</span> <span class="n">b</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="c1">#IMPLIMENTATION </span>
+</span><span class='line'>    <span class="c1">#IMPLEMENTATION </span>
 </span><span class='line'>    <span class="k">if</span> <span class="nb">self</span><span class="o">[</span><span class="n">passed_key</span><span class="o">].</span><span class="n">nil?</span>
 </span><span class='line'>      <span class="nb">self</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="n">passed_key</span> <span class="o">=&gt;</span> <span class="n">passed_value</span><span class="p">})</span>
 </span><span class='line'>    <span class="k">else</span> <span class="c1">#if the key passed exists, then take current value of key and put it in array w/ passed valued</span>
@@ -297,7 +297,7 @@ Below is my full Hash class duck punch, followed by some explanations.</p>
 
 <p>The initial if statements determine the class type of the parameter passed and break it into a key and a value assigned to <code>passed_key</code> and <code>passed_value</code> respectively.</p>
 
-<p>The array method conditional allows you to pass a single parameter as an array. The first element of the array will be treated as the key and the subsequent ones will be values. If there are multiple values passed they are kept in array.</p>
+<p>The array method conditional allows you to pass a single parameter as an array containing a key with one or more values. The first element of the array will be treated as the key and the subsequent ones will be values. If there are multiple values passed they are kept in an array.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -402,6 +402,8 @@ Below is my full Hash class duck punch, followed by some explanations.</p>
         <a class="basic-alignment left" href="/blog/2014/06/15/my-first-post-on-octopress/" title="Previous Post: My First Post On Octopress">&laquo; My First Post On Octopress</a>
       
       
+        <a class="basic-alignment right" href="/blog/2014/06/29/getting-geolocation-in-ruby-slash-sinatra/" title="Next Post: Getting Geolocation in Ruby / Sinatra">Getting Geolocation in Ruby / Sinatra &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -413,6 +415,10 @@ Below is my full Hash class duck punch, followed by some explanations.</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/06/29/getting-geolocation-in-ruby-slash-sinatra/">Getting Geolocation in Ruby / Sinatra</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/06/15/the-shoveled-hash/">The Shoveled Hash</a>
