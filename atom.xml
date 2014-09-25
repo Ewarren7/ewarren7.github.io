@@ -4,7 +4,7 @@
   <title><![CDATA[Musings of a Flatiron Ruby Student]]></title>
   <link href="http://Ewarren7.github.io/atom.xml" rel="self"/>
   <link href="http://Ewarren7.github.io/"/>
-  <updated>2014-07-23T12:23:36-04:00</updated>
+  <updated>2014-09-25T09:41:16-04:00</updated>
   <id>http://Ewarren7.github.io/</id>
   <author>
     <name><![CDATA[Edward Warren]]></name>
@@ -12,6 +12,203 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Allowing Temporary Anonymous Users]]></title>
+    <link href="http://Ewarren7.github.io/blog/2014/09/24/allowing-temporary-anonymous-user/"/>
+    <updated>2014-09-24T17:33:34-04:00</updated>
+    <id>http://Ewarren7.github.io/blog/2014/09/24/allowing-temporary-anonymous-user</id>
+    <content type="html"><![CDATA[<h1>Mixing in Temporary Anonymous Users with Omniauth</h1>
+
+<p>On a site I made with some fellow students, world-view.today, we allowed users who logged in with Twitter to customize the site by adding in their own cities. The log in was created using omniauth 2 and basically followed the steps outlined in fellow classmate <a href="http://randallreedjr.com/blog/2014/07/15/logging-in-with-github-using-omniauth-in-your-rails-app/">Randall&rsquo;s blog</a>, substituting twitter for github.</p>
+
+<p>One of the improvements we really wanted to make was to allow non logged in users to add in cities, a task that was not as daunting as we anticipated.</p>
+
+<h2>Our site before anonymous users</h2>
+
+<p>Our cities controller would associate a new city with a user whenever a logged in user added a city.
+Our user table simply stored the active recorded created <strong>user_id</strong>, <strong>created_at</strong>, <strong>updated_at</strong>, as well as <strong>name</strong>, <strong>provider</strong>, <strong>uid</strong>, and <strong>image</strong>. The provider column represented the provider used by omniauth, which in our case was always Twitter. The uid column was the unique id returned by the oath provider, twitter in our case, and the image was the Twitter profile image of the user.</p>
+
+<p>A city_users join table kept the user city relationships.</p>
+
+<p>Our site relies heavily on javascript and ajax calls so that it never has to load another page after the initial page load. Thus, our controllers would pass JSON objects, containing the cities objects, info on a users logged in status, uid&rsquo;s of saved items, ect.., back to our front end javascript.</p>
+
+<h2>Adding temporary anonymous users</h2>
+
+<p>Searching Google for creating users just based on a temporary basis using omniauth didn&rsquo;t yield any results so we set off to figure it out on our own.</p>
+
+<p>We settled on using the <code>session_id</code> that rails automatically creates and stores in a cookie for any visitor on your site. This id string is unique for any given visitor and thus we used this session_id as the unique identifier to store in the user&rsquo;s uid column.</p>
+
+<p>The first step in implementing this logically fell with our cities controller which handled the task of adding new cities and associating them with the current user. (Technically probably best to move this functionality into the model) When a new city was passed to the cities controller Create method via an ajax post request, the first thing the method did was set an @user variable:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">session</span><span class="o">[</span><span class="ss">:user_id</span><span class="o">]</span><span class="p">)</span> <span class="k">if</span> <span class="n">session</span><span class="o">[</span><span class="ss">:user_id</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>session[:user_id]</code> was a variable the sessions controller would add to the session cookie after a successful twitter oauth negotiation, aka only logged in users would have it. This variable also corresponds to the <code>user_id</code> assigned to a user when it is created with active record.</p>
+
+<p>The first step was to create the temp user when the controller received a new city and the current user was not logged in.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="o">!</span><span class="vi">@user</span> <span class="c1">#create a temp user tied to session ID</span>
+</span><span class='line'>  <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="nb">name</span><span class="p">:</span> <span class="s1">&#39;Guest&#39;</span><span class="p">,</span> <span class="ss">provider</span><span class="p">:</span> <span class="s1">&#39;anon&#39;</span><span class="p">,</span> <span class="ss">uid</span><span class="p">:</span> <span class="n">session</span><span class="o">[</span><span class="ss">:session_id</span><span class="o">]</span><span class="p">,</span> <span class="ss">image</span><span class="p">:</span> <span class="s1">&#39;https://origin.ih.constantcontact.com/fs197/1110193228531/img/301.jpg?a=1115291249439&#39;</span><span class="p">)</span>
+</span><span class='line'>  <span class="vi">@user</span><span class="o">.</span><span class="n">cities</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">]</span>
+</span><span class='line'>  <span class="n">session</span><span class="o">[</span><span class="ss">:user_id</span><span class="o">]</span> <span class="o">=</span> <span class="vi">@user</span><span class="o">.</span><span class="n">id</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">unless</span> <span class="vi">@user</span><span class="o">.</span><span class="n">cities</span><span class="o">.</span><span class="n">find_by</span><span class="p">(</span><span class="ss">lat</span><span class="p">:</span> <span class="n">city_params</span><span class="o">[</span><span class="ss">:lat</span><span class="o">]</span><span class="p">,</span> <span class="ss">lon</span><span class="p">:</span> <span class="n">city_params</span><span class="o">[</span><span class="ss">:lon</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'> <span class="c1">#above checks if the user already has this city and rejects the addition if so</span>
+</span><span class='line'>  <span class="vi">@user</span><span class="o">.</span><span class="n">cities</span> <span class="o">&lt;&lt;</span> <span class="vi">@city</span> <span class="k">if</span> <span class="vi">@user</span>
+</span><span class='line'>
+</span><span class='line'> <span class="c1">#the below handles deleting a city, which is mostly beyond the scope of this post. </span>
+</span><span class='line'>  <span class="n">del_city_id</span> <span class="o">=</span> <span class="n">city_params</span><span class="o">[</span><span class="ss">:lastClock</span><span class="o">].</span><span class="n">to_i</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">CityUser</span><span class="o">.</span><span class="n">find_by</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="vi">@user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">city_id</span><span class="p">:</span> <span class="n">del_city_id</span><span class="p">)</span><span class="o">.</span><span class="n">destroy</span> <span class="k">if</span> <span class="vi">@user</span>
+</span><span class='line'>  <span class="n">render</span> <span class="ss">json</span><span class="p">:</span> <span class="vi">@city</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'>  <span class="n">render</span> <span class="ss">json</span><span class="p">:</span> <span class="s2">&quot;this city already exists&quot;</span><span class="o">.</span><span class="n">to_json</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The user would immediately get shoveled in the 5 default cities, allowing them to be treated as a normal user that should always have exactly 5 cities. Whenever a new city is added, the last city is deleted and the new city is added as the first.</p>
+
+<p>Also note we set provider to anon. This allowed us to know this was a temporary user account. We also added to this temp user&rsquo;s session cookie the user_id variable that now corresponded to their  user_id in our users&#8217; table.</p>
+
+<p>Overall this allowed us to treat temporary users that could be treated like a real user without having to change much code.</p>
+
+<h2>When a temp user isn&rsquo;t a real user</h2>
+
+<p>There were some distinctions that we decided would be practical to keep. We didn&rsquo;t want our temp user&rsquo;s to be able to save content from within each of their cities and these temp users still needed the option to actually log in with twitter.</p>
+
+<p>These distinctions actually fit within our code base pretty well. Basically we wanted to treat a temp user as not logged in except for purposes of tracking which cities they had.</p>
+
+<p>Rails was keeping track of whether or not a user was logged in via a helper method in the application controller called logged_in?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">helper_method</span> <span class="k">def</span> <span class="nf">logged_in?</span>
+</span><span class='line'>    <span class="o">!!</span><span class="n">current_user</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">helper_method</span> <span class="k">def</span> <span class="nf">current_user</span>
+</span><span class='line'>    <span class="vi">@current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">session</span><span class="o">[</span><span class="ss">:user_id</span><span class="o">]</span><span class="p">)</span> <span class="k">if</span> <span class="n">session</span><span class="o">[</span><span class="ss">:user_id</span><span class="o">]</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We added a simple conditional check that made it so <code>logged_in?</code> would only return true if the provider did not equal anon in addition to their being a user_id var in the session.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">helper_method</span> <span class="k">def</span> <span class="nf">logged_in?</span>
+</span><span class='line'>    <span class="o">!!</span><span class="n">current_user</span> <span class="o">&amp;&amp;</span> <span class="vi">@current_user</span><span class="o">.</span><span class="n">provider</span> <span class="o">!=</span> <span class="s2">&quot;anon&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On the front end side we created a similar global variable called <code>loggedIn</code> that would get set and update as needed via ajax requests. The rails users controller sets the value of this variable based on checking the users logged in status.</p>
+
+<p>This meant we had a temp user whose cities would persist, but for all other purposes they would be treated as logged out.</p>
+
+<h2>Transitioning a temp user to a twitter authenticated user</h2>
+
+<p>To make the user experience as seamless as possible we wanted to make it so that a temp user who customized their cities and then logged in to our site with their twitter account for the first time would be able to keep their cities.</p>
+
+<p>To do this we modified the Sessions Controller&rsquo;s Create method which we had originally made when implementing OmniAuth with Twitter. This route is called as the twitter oauth callback and thus is invoked right after someone authenticates with twitter.</p>
+
+<p>We added the third nested <code>if</code> that checks to see if the session contains a <code>user_id</code>. This was a perfect test for finding temp users who then authenticate with twitter because only a temp user or a fully logged in user would have a session user_id; however, a user who is already logged in would never be routed to this create method, an oauth callback route.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">create</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">auth_hash</span><span class="o">.</span><span class="n">present?</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">!</span><span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find_by_provider_and_uid</span><span class="p">(</span><span class="n">auth_hash</span><span class="o">[</span><span class="ss">:provider</span><span class="o">]</span><span class="p">,</span> <span class="n">auth_hash</span><span class="o">[</span><span class="ss">:uid</span><span class="o">]</span><span class="p">)</span> <span class="c1">#ie a new twitter auth user. </span>
+</span><span class='line'>      <span class="k">if</span> <span class="n">session</span><span class="o">[</span><span class="ss">:user_id</span><span class="o">]</span> <span class="c1">#ie if was a temp user &amp; this is first time authing with twitter then replace their temp account uid, provider, name and image with this new auth hash info. </span>
+</span><span class='line'>        <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">session</span><span class="o">[</span><span class="ss">:user_id</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>        <span class="vi">@user</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">auth_hash</span><span class="o">[</span><span class="ss">:uid</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@user</span><span class="o">.</span><span class="n">provider</span> <span class="o">=</span> <span class="n">auth_hash</span><span class="o">[</span><span class="ss">:provider</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@user</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">auth_hash</span><span class="o">[</span><span class="ss">:info</span><span class="o">][</span><span class="ss">:name</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@user</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">auth_hash</span><span class="o">[</span><span class="ss">:info</span><span class="o">][</span><span class="ss">:image</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@user</span><span class="o">.</span><span class="n">save</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'>        <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">create_from_omniauth</span><span class="p">(</span><span class="n">auth_hash</span><span class="p">)</span>
+</span><span class='line'>        <span class="vi">@user</span><span class="o">.</span><span class="n">cities</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="no">City</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">]</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="vi">@user</span>
+</span><span class='line'>      <span class="n">session</span><span class="o">[</span><span class="ss">:user_id</span><span class="o">]</span> <span class="o">=</span> <span class="vi">@user</span><span class="o">.</span><span class="n">id</span>
+</span><span class='line'>      <span class="n">redirect_to</span> <span class="n">root_url</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="n">redirect_to</span> <span class="n">root_url</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="n">redirect_to</span> <span class="n">root_url</span><span class="p">,</span> <span class="ss">:notice</span> <span class="o">=&gt;</span> <span class="s2">&quot;Please login via twitter&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This third nested <code>if</code> sets the @user variable to the temp user if it finds a session <code>user_id</code>. It then replaces the <code>uid</code> of that user with the twitter provided oauth uid and also replaces the <code>provider</code>, <code>name</code> and <code>image</code> provided by the twitter authentication. Effectively this converts the temp user to a twitter authenticated, persistent world-view user who retains the cities they selected as a temp user.</p>
+
+<p>If a user has authenticated with twitter on our site before but they come back as an anonymous temp user, when they re-authenticate with twitter, their information from their temp account is not passed on to their previous user.</p>
+
+<h1>A database full of temp users</h1>
+
+<p>One slight draw back to our temp user approach is that our database fills up with temp users who will never be accessed after a temp users session cookie is lost or expires.</p>
+
+<p>On solution to this is to create a cron job that periodically checks for users with provider anon who were created over 30 days ago and then purges them.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Getting Geolocation in Ruby / Sinatra]]></title>
